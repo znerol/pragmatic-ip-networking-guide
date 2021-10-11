@@ -239,7 +239,6 @@ maintained in a separate ``drop-in`` file.
       networkctl releoad
 
    See `systemd/systemd#9627`_ for more details.
-   .. _`systemd/systemd#9627`: https://github.com/systemd/systemd/issues/9627
 
 Network configuration via network units / drop-ins for wireguard interface
 follows the same pattern as all examples presented here. The ``Match`` section
@@ -254,3 +253,35 @@ IPv6 and IPv4 addresses acting as the gateway for connected clients.
    :caption: vpn.network.d/inet-vpn.conf
    :language: ini
 
+.. _`systemd/systemd#9627`: https://github.com/systemd/systemd/issues/9627
+
+Loopback: lo
+------------
+
+Note that no static globally routable IPv6 address was assigned to any interface
+(except for the vpn gateway). In order to access services on the router
+(including SSH), a static IPv6 address needs to be present at some interface.
+
+Networking folks developed the habit to assign a routable IP on the loopback
+interface. This is especially useful on devices with many interfaces in the
+context of dynamic routing. The loopback interface never goes down, and thus an
+IP assigned to ``lo`` will be reachable as long as there is at least one route.
+
+Analogous to earlier examples ``lo.network`` simply matches the loopback device.
+The ``iface-type-loopback.conf`` drop-in is responsible for device type specific
+config. Notable ``KeepConfiguration = static`` preserves existing IP addresses
+and routes (i.e., ``127.0.0.1/8`` and ``::1/128`` configured during system
+bootup).
+
+.. literalinclude:: ../examples/01-linux-router/network/lo.network.d/iface-type-loopback.conf
+   :caption: lo.network.d/iface-type-loopback.conf
+   :language: ini
+
+The ``inet-lo.conf`` drop-in just assigns the routers IP:
+
+.. literalinclude:: ../examples/01-linux-router/network/lo.network.d/inet-lo.conf
+   :caption: lo.network.d/inet-lo.conf
+   :language: ini
+
+This IP should be recorded in DNS. It can be used to ``ping`` and ``ssh`` from
+wherever there is IPv6 connectivity - as long as filter rules allow it.
