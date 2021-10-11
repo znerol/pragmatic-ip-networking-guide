@@ -285,3 +285,26 @@ The ``inet-lo.conf`` drop-in just assigns the routers IP:
 
 This IP should be recorded in DNS. It can be used to ``ping`` and ``ssh`` from
 wherever there is IPv6 connectivity - as long as filter rules allow it.
+
+Nftables Ruleset
+================
+
+Documentation on nftables regrettably isn't that comprehensive yet. The
+`nft(8)`_ manpage provides up-to-date reference material. Some usage examples
+and recipes are available from the `nftables wiki`_ and also from various Linux
+distro wiki pages (quality of content varies). It is essential to understand
+`packet flow through netfilter hooks`_ and to keep in mind the following rule
+when reasoning about rulesets:
+
+.. hint:: **Evaluation of Rules**
+
+   In order to be delivered, a packet must be ``accept``-ed by every base chain
+   in all traversed hooks.
+
+   A packet is discarded immediately as soon as it is ``drop``-ed or
+   ``reject``-ed. None of the rules in later chains and hooks will have the
+   opportunity to further handle it.
+
+.. _`nft(8)`: https://manpages.debian.org/stable/nftables/nft.8.en.html
+.. _`nftables wiki`: https://wiki.nftables.org/wiki-nftables/index.php/Main_Page
+.. _`packet flow through netfilter hooks`: https://wiki.nftables.org/wiki-nftables/index.php/Netfilter_hooks
