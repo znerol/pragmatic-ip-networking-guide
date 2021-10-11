@@ -42,6 +42,51 @@ configuration snippets.
 
 .. _systemd.network(5): https://manpages.debian.org/stable/systemd/systemd.network.5.en.html
 
+.. code-block::
+
+   $ tree network
+   network
+   ├── lo.network
+   ├── lo.network.d
+   │   ├── iface-type-loopback.conf
+   │   └── inet-lo.conf
+   ├── trunk.network
+   ├── trunk.network.d
+   │   ├── child-vlan-dmz.conf
+   │   ├── child-vlan-guest.conf
+   │   ├── child-vlan-staff.conf
+   │   └── iface-type-trunk.conf
+   ├── vlan-dmz.netdev
+   ├── vlan-dmz.network
+   ├── vlan-dmz.network.d
+   │   ├── iface-type-router.conf
+   │   └── inet-vlan-dmz.conf
+   ├── vlan-guest.netdev
+   ├── vlan-guest.network
+   ├── vlan-guest.network.d
+   │   ├── iface-service-dhcp4.conf
+   │   ├── iface-service-router-adv.conf
+   │   ├── iface-type-router.conf
+   │   └── inet-vlan-guest.conf
+   ├── vlan-staff.netdev
+   ├── vlan-staff.network
+   ├── vlan-staff.network.d
+   │   ├── iface-service-dhcp4.conf
+   │   ├── iface-service-router-adv.conf
+   │   ├── iface-type-router.conf
+   │   └── inet-vlan-staff.conf
+   ├── vpn.netdev
+   ├── vpn.netdev.d
+   │   ├── peer1.example.com.conf
+   │   └── peer2.example.com.conf
+   ├── vpn.network
+   ├── vpn.network.d
+   │   └── inet-vpn.conf
+   ├── wan.network
+   └── wan.network.d
+      └── inet-wan.conf
+
+   8 directories, 31 files
 
 Interface: ens1 / wan (autoconfigured via SLAAC/DHCP)
 -----------------------------------------------------
