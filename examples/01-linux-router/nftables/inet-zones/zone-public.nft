@@ -1,0 +1,6 @@
+# Destination zone public (public hostings)
+
+# Rules evaluated for all traffic entering this zone originating from public clients zone.
+chain forward-public {
+    tcp dport { http, https } ct state new accept
+}

@@ -1,0 +1,36 @@
+# interfaces with autoconfigurated clients
+define zone_autoconfig = {
+    $nic_guest,
+    $nic_staff,
+}
+
+# management zone
+define zone_management_source = {
+    $nic_staff,
+    $nic_vpn,
+}
+define zone_management_dest = {
+    $nic_dmz,
+}
+
+# public services zone
+define zone_public_source = {
+    $nic_guest,
+    $nic_staff,
+    $nic_wan,
+}
+define zone_public_dest = {
+    $nic_dmz,
+}
+
+# restricted wan access zone
+define zone_restricted_wan_source = {
+    $nic_dmz,
+}
+
+# unrestricted wan access zone
+define zone_unrestricted_wan_source = {
+    $nic_guest,
+    $nic_staff,
+    $nic_vpn,
+}

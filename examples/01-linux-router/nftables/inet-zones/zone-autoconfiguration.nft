@@ -1,0 +1,13 @@
+# Zone for interfaces providing autoconfiguration services.
+
+# Rules evaluated for all traffic from this zone directed at this host.
+chain host-input-autoconfig {
+  jump host-input-slaac-router
+  jump host-input-dhcp4-server
+}
+
+# Rules evaluated for all traffic entering this zone originating from this host.
+chain host-output-autoconfig {
+  jump host-output-slaac-router
+  jump host-output-dhcp4-server
+}

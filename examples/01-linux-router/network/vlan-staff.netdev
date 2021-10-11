@@ -1,0 +1,6 @@
+[NetDev]
+Name = vlan-guest
+Kind = vlan
+
+[VLAN]
+Id = 54

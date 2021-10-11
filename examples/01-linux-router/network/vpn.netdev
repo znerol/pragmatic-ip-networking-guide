@@ -1,0 +1,8 @@
+[NetDev]
+Name = vpn
+Kind = wireguard
+Description = wireguard server
+
+[WireGuard]
+ListenPort = 51820
+PrivateKeyFile = /etc/wireguard/private.key

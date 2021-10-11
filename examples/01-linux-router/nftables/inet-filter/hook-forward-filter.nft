@@ -1,0 +1,28 @@
+chain forward-filter {
+    type filter hook forward priority filter; policy drop;
+
+    # Accept established connections, drop invalid ones.
+    jump global-conntrack-essentials
+
+    # Forward zone: management
+    # Accept selected traffic from management zone to managed services zones.
+    iifname $zone_management_source oifname $zone_management_dest \
+        jump forward-management
+
+    # Forward zone: public services
+    # Accept selected traffic from public clients zones to public services zones.
+    iifname $zone_public_source oifname $zone_public_dest \
+        jump forward-public
+
+    # Forward zone: unrestricted wan access
+    # Accept all traffic from unrestricted zones to wan.
+    iifname $zone_unrestricted_wan_source oifname $nic_wan accept
+
+    # Forward zone: restricted wan access
+    # Accept selected traffic from restricted zones to wan.
+    iifname $zone_restricted_wan_source oifname $nic_wan \
+        jump forward-restricted-to-wan
+
+    # Log unmatched to NFLOG group 0
+    log group 0 prefix "forward-filter:drop-default"
+}

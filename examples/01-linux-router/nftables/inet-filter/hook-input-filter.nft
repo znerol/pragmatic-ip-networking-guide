@@ -1,0 +1,31 @@
+chain host-input-filter {
+    type filter hook input priority filter; policy drop;
+
+    # Accept established connections, drop invalid ones.
+    jump global-conntrack-essentials
+
+    # Accept ICMPv6 essentials.
+    jump host-icmp6-essentials
+
+    # Accept traffic to loopback interface.
+    iif lo accept
+
+    # Accept traffic to wireguard port on all interfaces.
+    udp dport 51820 accept \
+        comment "host-input-filter: Accept access to wireguard port"
+
+    # Host input: autoconfiguration
+    # Accept DHCP4 requests / ICMP6 RS from autoconfiguration zone.
+    iifname $zone_autoconfig jump host-input-autoconfig
+
+    # Host input: management
+    # Accept ssh traffic from management zone.
+    iifname $zone_management_source jump host-input-management
+
+    # Host input: wan
+    # Accept selected traffic from wan zone.
+    iifname $nic_wan jump host-input-wan
+
+    # Log unmatched to NFLOG group 0
+    log group 0 prefix "host-input-filter:drop-default"
+}

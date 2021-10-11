@@ -1,0 +1,32 @@
+# Essential connection tracking rules for input, output and forward chains.
+#
+# Immediately accept all packets from established and related connections. Drop
+# invalid packets. Only pass on untracked and new connections to subsequent
+# rules on the same chain.
+#
+# Example usage near the top of an input, forward or output chain:
+#
+#   jump global-conntrack-essentials
+#
+chain global-conntrack-essentials {
+    ct state established,related accept \
+        comment "global-conntrack-essentials: Accept established connections and related packets"
+    ct state invalid \
+        log group 1 prefix "global-conntrack-essentials:drop-invalid" drop \
+        comment "global-conntrack-essentials: Drop invalid packets"
+}
+
+# Essential ICMPv6 filter rules for input and output chains.
+#
+# Example usage near the top of an input or output chain:
+#
+#   jump host-icmp6-essentials
+#
+chain host-icmp6-essentials {
+    icmpv6 type { \
+        nd-neighbor-solicit, \
+        nd-neighbor-advert, \
+        ind-neighbor-solicit, \
+        ind-neighbor-advert \
+    } accept comment "host-icmp6-essentials: Accept ICMPv6 NS/NA/INS/INA"
+}

@@ -1,0 +1,87 @@
+# SLAAC filter rules for input chains on routers.
+#
+# Example usage near the top of an input chain:
+#
+#   jump host-input-slaac-router
+#
+chain host-input-slaac-router {
+    icmpv6 type nd-router-solicit accept \
+        comment "host-input-slaac-router: Accept ICMPv6 RS"
+}
+
+# SLAAC filter rules for input chains on connected devices (clients/servers).
+#
+# Example usage near the top of an input chain:
+#
+#   jump host-input-slaac-client
+#
+chain host-input-slaac-client {
+    icmpv6 type nd-router-advert accept \
+        comment "host-input-slaac-client: Accept ICMPv6 RA"
+}
+
+# SLAAC filter rules for output chains on routers.
+#
+# Example usage near the top of an output chain:
+#
+#   jump host-output-slaac-router
+#
+chain host-output-slaac-router {
+    icmpv6 type nd-router-advert accept \
+        comment "host-output-slaac-router: Accept ICMPv6 RA"
+}
+
+# SLAAC filter rules for output chains on connected devices (clients/servers).
+#
+# Example usage near the top of an output chain:
+#
+#   jump host-output-slaac-client
+#
+chain host-output-slaac-client {
+    icmpv6 type nd-router-solicit accept \
+        comment "host-output-slaac-client: Accept ICMPv6 RS"
+}
+
+# DHCP filter rules for input chains on DHCPv4 servers.
+#
+# Example usage near the top of an input chain:
+#
+#   jump host-input-dhcp4-server
+#
+chain host-input-dhcp4-server {
+    udp sport 68 udp dport 67 accept \
+        comment "host-input-dhcp4-server: Accept DHCPv4 queries"
+}
+
+# DHCP filter rules for input chains on connected devices (clients/servers).
+#
+# Example usage near the top of an input chain:
+#
+#   jump host-input-dhcp4-client
+#
+chain host-input-dhcp4-client {
+    udp sport 67 udp dport 68 accept \
+        comment "host-input-dhcp4-client: Accept DHCPv4 responses"
+}
+
+# DHCP filter rules for output chains on DHCPv4 servers.
+#
+# Example usage near the top of an output chain:
+#
+#   jump host-output-dhcp4-server
+#
+chain host-output-dhcp4-server {
+    udp sport 67 udp dport 68 accept \
+        comment "host-output-dhcp4-server: Accept DHCPv4 responses"
+}
+
+# DHCP filter rules for output chains on connected devices (clients/servers).
+#
+# Example usage near the top of an output chain:
+#
+#   jump host-output-dhcp4-client
+#
+chain host-output-dhcp4-client {
+    udp sport 68 udp dport 67 accept \
+        comment "host-output-dhcp4-client: Accept DHCPv4 queries"
+}

@@ -1,0 +1,7 @@
+table ip managed-by-ansible.ip4-nat {
+    chain postrouting-srcnat {
+        type nat hook postrouting priority srcnat;
+
+        oifname $nic_wan masquerade
+    }
+}

@@ -1,0 +1,30 @@
+# Service zone wan (upstream interface)
+
+# Rules evaluated for all traffic leaving the restricted zone directed towards the wan.
+chain forward-restricted-to-wan {
+    # Accept NTP and DNS requests
+    udp dport { ntp, domain, domain-s } accept
+
+    # Accept HTTP/HTTPS/DoT
+    tcp dport { http, https, domain-s } ct state new accept
+}
+
+# Rules evaluated for all traffic from this zone directed at this host.
+chain host-input-wan {
+    # Accept incomming Router Advertisement and DHCP4 responses.
+    jump host-input-slaac-client
+    jump host-input-dhcp4-client
+}
+
+# Rules evaluated for all traffic entering this zone originating from this host.
+chain host-output-wan {
+    # Accept outgoing Router Solicitation and DHCP4 requests.
+    jump host-output-slaac-client
+    jump host-output-dhcp4-client
+
+    # Accept NTP and DNS requests
+    udp dport { ntp, domain, domain-s } accept
+
+    # Accept HTTP/HTTPS/DoT
+    tcp dport { http, https, domain-s } ct state new accept
+}

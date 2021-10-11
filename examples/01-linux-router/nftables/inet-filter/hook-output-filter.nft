@@ -1,0 +1,27 @@
+chain host-output-filter {
+    type filter hook output priority filter; policy drop;
+
+    # Accept established connections, drop invalid ones.
+    jump global-conntrack-essentials
+
+    # Accept ICMPv6 essentials.
+    jump host-icmp6-essentials
+
+    # Accept traffic from loopback interface.
+    oif lo accept
+
+    # Accept traffic from wireguard port on all interfaces.
+    udp sport 54412 accept \
+        comment "host-output-filter: Accept traffic from wireguard port"
+
+    # Host output: autoconfiguration
+    # Accept DHCP4 responses / ICMP6 RA to autoconfiguration zone.
+    oifname $zone_autoconfig jump host-output-autoconfig
+
+    # Host output: wan
+    # Accept selected traffic towards the wan interface.
+    oifname $nic_wan jump host-output-wan
+
+    # Log unmatched to NFLOG group 0
+    log group 0 prefix "host-output-filter:drop-default"
+}

@@ -1,0 +1,21 @@
+# Source zone management (client machines allowed to manage the hosts and network)
+
+# Rules evaluated for all traffic leaving this zone directed towards managed services zone.
+chain forward-management {
+    # Accept management.
+    tcp dport { ssh, http, https } ct state new accept
+
+    # Accept pings.
+    icmp type echo-request accept
+    icmpv6 type echo-request accept
+}
+
+# Rules evaluated for all traffic from this zone directed at this host.
+chain host-input-management {
+    # Accept management.
+    tcp dport ssh ct state new accept
+
+    # Accept pings.
+    icmp type echo-request accept
+    icmpv6 type echo-request accept
+}

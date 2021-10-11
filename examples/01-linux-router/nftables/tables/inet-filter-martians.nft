@@ -1,0 +1,17 @@
+# Implements BCP38 / RFC2827 / reverse path filtering using the fib.
+# * http://www.bcp38.info/index.php/Main_Page
+# * https://datatracker.ietf.org/doc/html/rfc2827
+# * https://manpages.debian.org/bullseye/nftables/nft.8.en.html#FIB_EXPRESSIONS
+#
+# Note: Applies to all interfaces on the system.
+table inet managed-by-ansible.inet-filter-martians {
+    chain prerouting-raw-rpfilter {
+        type filter hook prerouting priority raw; policy drop;
+
+        # Lookup the tuple (saddr, iif) in the fib and extract the oif from the
+        # resulting entry. Accept the packet if that information exists.
+        fib saddr . iif oif exists accept
+
+        log group 0 prefix "prerouting-raw-rpfilter:drop-martian"
+    }
+}

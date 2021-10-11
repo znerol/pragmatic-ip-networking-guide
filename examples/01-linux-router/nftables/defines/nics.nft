@@ -1,0 +1,5 @@
+define nic_dmz = vlan-dmz
+define nic_guest = vlan-guest
+define nic_staff = vlan-staff
+define nic_vpn = vpn
+define nic_wan = ens1
