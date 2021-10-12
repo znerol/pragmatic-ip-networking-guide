@@ -298,13 +298,87 @@ when reasoning about rulesets:
 
 .. hint:: **Evaluation of Rules**
 
-   In order to be delivered, a packet must be ``accept``-ed by every base chain
+   In order to be delivered, a packet must be ``accept``\ ed by every base chain
    in all traversed hooks.
 
-   A packet is discarded immediately as soon as it is ``drop``-ed or
-   ``reject``-ed. None of the rules in later chains and hooks will have the
+   A packet is discarded immediately as soon as it is ``drop``\ ed or
+   ``reject``\ ed. None of the rules in later chains and hooks will have the
    opportunity to further handle it.
+
+It is possible to leverage this behavior and design rulesets which are quite
+modular and easy to maintain by isolating reusable logic into generic tables and
+chains.
 
 .. _`nft(8)`: https://manpages.debian.org/stable/nftables/nft.8.en.html
 .. _`nftables wiki`: https://wiki.nftables.org/wiki-nftables/index.php/Main_Page
 .. _`packet flow through netfilter hooks`: https://wiki.nftables.org/wiki-nftables/index.php/Netfilter_hooks
+
+nftables.conf
+-------------
+
+The main entrypoint is ``/etc/nftables.conf`` which simply includes definitions
+and tables in the correct order. Note that with this design, features can be
+added to the firewall by simply dropping more table files into the appropriate
+directory.
+
+.. literalinclude:: ../examples/01-linux-router/nftables.conf
+   :caption: nftables.conf
+   :language: ini
+
+The rest of the configuration gets collected using includes from
+``/etc/nftables`` directory:
+
+.. code-block::
+
+   nftables
+   ├── defines
+   │   ├── nics.nft
+   │   └── zones.nft
+   ├── inet-filter
+   │   ├── hook-forward-filter.nft
+   │   ├── hook-input-filter.nft
+   │   └── hook-output-filter.nft
+   ├── inet-lib
+   │   ├── chains-autoconf.nft
+   │   └── chains-essentials.nft
+   ├── inet-zones
+   │   ├── zone-autoconfiguration.nft
+   │   ├── zone-management.nft
+   │   ├── zone-public.nft
+   │   └── zone-wan.nft
+   └── tables
+      ├── inet-filter-martians.nft
+      ├── inet-filter.nft
+      └── ip4-nat.nft
+
+   5 directories, 14 files
+
+Main entry points are the tables, thus let's go through these first.
+
+Martians
+--------
+
+Reverse path filtering (aka uRPF, aka BCP38, aka RFC 2827) can be implemented
+using nftables for both IPv4 and IPv6. As long as routes are symetric, the
+following ruleset will ensure that packets entering a given interface do have a
+plausible source address.
+
+.. literalinclude:: ../examples/01-linux-router/nftables/tables/inet-filter-martians.nft
+   :caption: nftables/tables/inet-filter-martians.nft
+   :language: ini
+
+This example uses the ``fib`` (forward information base). The nftables wiki has
+additional examples on `matching routing information`_.
+
+.. hint:: **Table names and chain names**
+
+   Tables are merely containers for chains and associated state. Chains are
+   containers for rules. Their names do not have any significance during rule
+   execution. Only the table family (e.g., ``inet``) and the
+   ``type ... hook ... priority`` line are relevant (and the rules of course).
+
+   It might help to think about tables as namespaces. Names can help avoid
+   collisions when combining tables from multiple sources in one ruleset and
+   they make it easier to navigate the output of ``nft list ruleset``.
+
+.. _`matching routing information`: https://wiki.nftables.org/wiki-nftables/index.php/Matching_routing_information
