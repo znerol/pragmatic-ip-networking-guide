@@ -1,0 +1,22 @@
+chain host-input-filter {
+    type filter hook input priority filter; policy drop;
+
+    # Accept established connections, drop invalid ones.
+    jump global-conntrack-essentials
+
+    # Accept ICMPv6 essentials.
+    jump host-icmp6-essentials
+
+    # Accept traffic to loopback interface.
+    iif lo accept
+
+    # Accept management and connections to public services.
+    tcp dport { ssh, http, https } ct state new accept
+
+    # Accept pings.
+    icmp type echo-request accept
+    icmpv6 type echo-request accept
+
+    # Log unmatched to NFLOG group 0
+    log group 0 prefix "host-input-filter:drop-default"
+}

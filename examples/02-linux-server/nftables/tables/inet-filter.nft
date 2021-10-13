@@ -1,0 +1,4 @@
+table inet managed-by-ansible.inet-filter {
+    include "/etc/nftables/inet-lib/*.nft"
+    include "/etc/nftables/inet-filter/*.nft"
+}
