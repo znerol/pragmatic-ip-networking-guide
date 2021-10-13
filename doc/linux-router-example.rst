@@ -382,3 +382,58 @@ additional examples on `matching routing information`_.
    they make it easier to navigate the output of ``nft list ruleset``.
 
 .. _`matching routing information`: https://wiki.nftables.org/wiki-nftables/index.php/Matching_routing_information
+
+Zoned Firewall
+--------------
+
+Chains included in ``inet-filter.nft`` file form a flexible zoned firewall.
+
+.. literalinclude:: ../examples/01-linux-router/nftables/tables/inet-filter.nft
+   :caption: nftables/tables/inet-filter.nft
+   :language: ini
+
+The goal of the presented design is that new VLANs can easily be added to
+existing zones (via the ``zones.nft`` file). Also adding new rules to existing
+zones is a matter of adding them to the appropriate chain in one of the
+``zone-XX.nft`` files.
+
+.. literalinclude:: ../examples/01-linux-router/nftables/defines/zones.nft
+   :caption: nftables/defines/zones.nft
+   :language: ini
+
+Some zones are only relevant in ``input`` and ``output`` hooks (e.g.,
+``autoconfiguration``). Others are used when ``forward``-ing traffic (e.g.,
+``public``) and some are hooked into ``input`` and ``forward`` (e.g.,
+management).
+
+Forward zones are directional, hence it is necessary to define two sets of
+interfaces (source and dest).
+
+Also note that interfaces can be part of multiple zones. E.g., ``nic_dmz`` is a
+*destination* for traffic in the management zone and in the public zone, and at
+the same time it is a *source* in the *restricted_wan* zone.
+
+In some zones, there is by definition only one destination interface (e.g., in
+the *wan* zones). In that case, an explicit set of interfaces can be omitted and
+the interface name is used directly in the base chains.
+
+Base chains are defined in ``hook-forward-filter.nft``,
+``hook-input-filter.nft`` and ``hook-output-filter.nft``. Note that base chains
+are named according to the following pattern: `<hook-name>-<priority-keyword>`.
+
+.. literalinclude:: ../examples/01-linux-router/nftables/inet-filter/hook-forward-filter.nft
+   :caption: nftables/inet-filter/hook-forward-filter.nft
+   :language: ini
+
+The structure of the forwarding rules is quite simple. In a stateful firewall,
+the first thing to check is `conntrack metadata`_. The following rules simply
+match input and output interface metadata and apply rules defined for the
+respective zones.
+
+Note, it is possible to use ``iif`` and ``oif`` instead of ``iifname`` and
+``oifname``. The former matches interface index and the latter the interface
+name. It follows that the short syntax only can be used if all interfaces are
+brought up at boot time and never change during runtime. The long syntax is
+useful when interfaces are created dynamically. E.g. for PPP(oE) uplinks.
+
+:: _`conntrack metadata`: https://wiki.nftables.org/wiki-nftables/index.php/Matching_connection_tracking_stateful_metainformation
