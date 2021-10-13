@@ -289,6 +289,11 @@ wherever there is IPv6 connectivity - as long as filter rules allow it.
 Nftables Ruleset
 ================
 
+All configuration files are available in the github repo under
+`examples/01-linux-router`_.
+
+.. _`examples/01-linux-router`: https://github.com/znerol/pragmatic-ip-networking-guide/tree/main/examples/01-linux-router/
+
 Documentation on nftables regrettably isn't that comprehensive yet. The
 `nft(8)`_ manpage provides up-to-date reference material. Some usage examples
 and recipes are available from the `nftables wiki`_ and also from various Linux
@@ -436,4 +441,39 @@ name. It follows that the short syntax only can be used if all interfaces are
 brought up at boot time and never change during runtime. The long syntax is
 useful when interfaces are created dynamically. E.g. for PPP(oE) uplinks.
 
-:: _`conntrack metadata`: https://wiki.nftables.org/wiki-nftables/index.php/Matching_connection_tracking_stateful_metainformation
+.. _`conntrack metadata`: https://wiki.nftables.org/wiki-nftables/index.php/Matching_connection_tracking_stateful_metainformation
+
+Zone files can be quite simple. The ``public`` forwarding zone consists of one
+chain with one rule. More rules (e.g., for UDP traffic) could be added easily.
+
+.. literalinclude:: ../examples/01-linux-router/nftables/inet-zones/zone-public.nft
+   :caption: nftables/inet-zones/zone-public.nft
+   :language: ini
+
+Note ``ct state new`` matches conntrack metadata ``new`` state. After
+``global-conntrack-essentials``, it is not strictly required to explicitly match
+that (since everything else was already accepted or dropped). Stating ``ct state
+new`` explicitly on ``tcp`` rules is a matter of good style.
+
+The management zone is a bit more complex since it is referenced from the
+``forward`` as well as from the ``input`` hooks.
+
+.. literalinclude:: ../examples/01-linux-router/nftables/inet-zones/zone-management.nft
+   :caption: nftables/inet-zones/zone-management.nft
+   :language: ini
+
+More examples are available in the github repo under
+`examples/01-linux-router`_.
+
+.. _`examples/01-linux-router`: https://github.com/znerol/pragmatic-ip-networking-guide/tree/main/examples/01-linux-router/
+
+IPv4 NAPT
+---------
+
+Network address and port translation for IPv4 can be added using another drop-in
+table. Note that this table is restricted to IPv4 (the ``ip`` family is
+specified in the table definition),
+
+.. literalinclude:: ../examples/01-linux-router/nftables/tables/ip4-nat.nft
+   :caption: nftables/nftables/tables/ip4-nat.nft
+   :language: ini
