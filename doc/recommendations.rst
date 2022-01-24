@@ -6,8 +6,8 @@ Recommendations
 Segments
 ========
 
-Unless there is only one client device, networks need to be segmented into
-multiple subnets on different VLANs. Different classes of devices require
+Unless there is only one client, networks need to be segmented into
+multiple subnets on different VLANs. Different classes of nodes require
 different services from the network. Separating them makes it easier to meet
 those requirements.
 
@@ -24,7 +24,7 @@ Use separate VLANs for (non exhaustive list):
 
 .. hint:: **Segments and Autoconfiguration**
 
-   Do not mix statically addressed and autoconfigured devices in the same
+   Do not mix statically addressed and autoconfigured nodes in the same
    subnet.
 
    Laptops and Workstations typically are configured using router advertisements
@@ -75,7 +75,7 @@ Default Gateway
 ---------------
 
 IPv6 routers advertise their link-local address and not a globally routable one
-(see `RFC 4861 section 6.1.2`_). Hence, the default gateway on connected device
+(see `RFC 4861 section 6.1.2`_). Hence, the default gateway on connected nodes
 is supposed to point to a link local address (i.e., an address within
 ``fe80::/64``). Usually, IPv6 link-local addresses are derived automatically
 from the MAC address of the network interface. However, using generated
@@ -106,7 +106,7 @@ DNS zones need to be hosted somewhere. SOHO routers typically provide point and
 click interfaces where DNS entries can be added to some internal DNS server
 which typically doubles as recursive DNS resolver. In order for this to work,
 the address of that internal DNS server needs to be configured (maunally or via
-autoconfiguration) on all devices who wish to resolve those entries.
+autoconfiguration) on all nodes who wish to resolve those entries.
 
 This configuration is known as split-horizon DNS. And it falls short if people
 start to use validating resolvers (DNSSEC) and alternative DNS resolvers,
@@ -117,30 +117,30 @@ sometimes over encrypted protocols (DoT, DoH).
    Avoid deploying private DNS zones and split-horizon DNS. Instead place all
    resource records into public DNS.
 
-Device Names
-------------
+Node Names
+----------
 
-Every device which provides any type of service should have a name. This
+Every node which provides any type of service should have a name. This
 includes routers, servers, VMs, containers, printers, WiFi access points etc. A
 popular choice is to just add ``AAAA`` records to the domain name of the
 family website or the primary domain of a business.
 
 While convenient in the beginning, this can pose problems down the road. The
 website might be managed by contractors while the network stays inhouse or
-vice-versa. Device records might be managed by an orchestrator while access to
+vice-versa. Node records might be managed by an orchestrator while access to
 the DNS zone of the main website needs to be restricted due to policy reasons.
 Maintaining separate DNS zones for different purposes also simplifies gradual
 rollouts, e.g. of DNSSEC.
 
-.. hint:: **Use a dedicated domain for devices**
+.. hint:: **Use a dedicated domain for nodes**
 
    Thus it is recommended to register and maintain a dedicated domain and only
-   add ``AAAA`` records for network devices there. Additional records like
-   ``SSHFP`` could be added as well, this will simplify device administration
+   add ``AAAA`` records for network nodes there. Additional records like
+   ``SSHFP`` could be added as well, this will simplify node administration
    greatly.
 
-Devices need to be replaced over time. In order to simplify this process, old
-names should not be reused for new devices. Instead each device keeps its name
+Nodes need to be replaced over time. In order to simplify this process, old
+names should not be reused for new nodes. Instead each node keeps its name
 over its whole lifespan in a network. Holding on to this practice simplifies
 the development of a network since old and new equipment can be operated in
 parallel for some time.
@@ -149,23 +149,23 @@ Service Names
 -------------
 
 Every service should have a name. This includes webapps, file sharing,
-directory services, etc. A popular choice is to just use the device name where
+directory services, etc. A popular choice is to just use the node name where
 the service happens to be hosted.
 
 Services need to keep their name, otherwise people are forced to update
-bookmarks and printer queues. It follows that reusing device names for services
-will pose problems in the long run when devices need to be replaced.
+bookmarks and printer queues. It follows that reusing node names for services
+will pose problems in the long run when nodes need to be replaced.
 
 In addition, services might be composed from several applications running on
-different devices, VMs or containers. The service name is then simply pointing
-towards the device hosting the frontend server for TLS termination, reverse
+different nodes, VMs or containers. The service name is then simply pointing
+towards the node hosting the frontend server for TLS termination, reverse
 proxying and/or load balancing.
 
 .. hint:: **Use a dedicated domain for services**
 
    Thus it is recommended to register and maintain a dedicated domain for
-   internal services. Either add ``AAAA`` records containing IPs of the devices
-   hosting a service or add ``CNAME`` pointing towards the device names.
+   internal services. Either add ``AAAA`` records containing IPs of the nodes
+   hosting a service or add ``CNAME`` pointing towards the node names.
 
 .. caution:: **Service enumeration via CT logs**
 
@@ -185,9 +185,9 @@ proxying and/or load balancing.
 Addressing
 ==========
 
-Devices providing services to connected clients need a fixed IP address. IPv6
+Nodes providing services to connected clients need a fixed IP address. IPv6
 addresses assigned automatically via SLAAC do not change over time. Thus, such
-IPs are quite suitable as a stable identifier for a given device connected to a
+IPs are quite suitable as a stable identifier for a given node connected to a
 specific network.
 
 However, SLAAC can be problematic when used with servers and VMs. Some operating
@@ -200,8 +200,8 @@ on servers.
 .. hint:: **Maintain the SLAAC IP for printers in DNS**
 
    In order to be easily reachable from clients, the SLAAC IP of every printer
-   should be recorded in the DNS zone for devices and a separate record should
-   be maintained in the DNS zone for services pointing to the respective device
+   should be recorded in the DNS zone for nodes and a separate record should
+   be maintained in the DNS zone for services pointing to the respective node
    name.
 
    Using SLAAC for printers spares administrators from the tedious exercise to

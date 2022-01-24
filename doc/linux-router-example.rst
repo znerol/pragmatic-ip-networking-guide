@@ -263,7 +263,7 @@ Note that no static globally routable IPv6 address was assigned to any interface
 (including SSH), a static IPv6 address needs to be present at some interface.
 
 Networking folks developed the habit to assign a routable IP on the loopback
-interface. This is especially useful on devices with many interfaces in the
+interface. This is especially useful on nodes with many interfaces in the
 context of dynamic routing. The loopback interface never goes down, and thus an
 IP assigned to ``lo`` will be reachable as long as there is at least one route.
 

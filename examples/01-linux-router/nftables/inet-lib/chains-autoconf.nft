@@ -9,7 +9,7 @@ chain host-input-slaac-router {
         comment "host-input-slaac-router: Accept ICMPv6 RS"
 }
 
-# SLAAC filter rules for input chains on connected devices (clients/servers).
+# SLAAC filter rules for input chains on connected nodes (clients/servers).
 #
 # Example usage near the top of an input chain:
 #
@@ -31,7 +31,7 @@ chain host-output-slaac-router {
         comment "host-output-slaac-router: Accept ICMPv6 RA"
 }
 
-# SLAAC filter rules for output chains on connected devices (clients/servers).
+# SLAAC filter rules for output chains on connected nodes (clients/servers).
 #
 # Example usage near the top of an output chain:
 #
@@ -53,7 +53,7 @@ chain host-input-dhcp4-server {
         comment "host-input-dhcp4-server: Accept DHCPv4 queries"
 }
 
-# DHCP filter rules for input chains on connected devices (clients/servers).
+# DHCP filter rules for input chains on connected nodes (clients/servers).
 #
 # Example usage near the top of an input chain:
 #
@@ -75,7 +75,7 @@ chain host-output-dhcp4-server {
         comment "host-output-dhcp4-server: Accept DHCPv4 responses"
 }
 
-# DHCP filter rules for output chains on connected devices (clients/servers).
+# DHCP filter rules for output chains on connected nodes (clients/servers).
 #
 # Example usage near the top of an output chain:
 #
